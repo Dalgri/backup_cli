@@ -67,47 +67,68 @@ class SetupDefaults:
             conf.setdefault('backup', str(self.conf['default_backup']))
             self.filemanager.save(conf)
 
-class Executables:
-    def __init__(self):
-        self.filemanager = FileManager()
+class ConfigManager:
     
-    def conf(self):
-        return self.filemanager.load()
+    def __init__(self, path: str = 'conf_file.json'):
+        self._fm = FileManager(path)
+        self._conf = None
         
+    def _ensure_loaded(self):
+        if self._conf is None:
+            self._conf = self._fm.load()
+            
+    def bootstrap_defaults(self):
+        # Ensure config file exists with sensible default. Call once on startup.
+        self._ensure_loaded()
+        
+        default = Path.home() / 'Documents' / 'backup'
+        default.mkdir(parents=True, exist_ok=True)
+        
+        self._conf.setdefault('source', [])
+        self._conf.setdefault('default_backup', str(default))
+        self._conf.setdefault('backup', self._conf['default_backup'])
+        
+        self._fm.save(self._conf)
+    
+    # ---- all the Executables methods live here ----
+    
+    def add_source(self, path: str):
+        self._ensure_loaded()
+        self._conf.setdefault('source', []).append(str(Path(path).resolve()))
+        self._fm.save(self._conf)
+        
+    def remove_source(self, idx: int):
+        self._ensure_loaded()
+        removed = self._conf['source'].pop(idx)
+        self._fm.save(self._conf)
+        return removed
+    
+    def get_sources(self):
+        self._ensure_loaded()
+        return self._conf.get('source', [])
+    
+    def get_backup_path(self):
+        self._ensure_loaded()
+        return self._conf.get('backup', 'Not set')
+    
+    def get_default_path(self):
+        self._ensure_loaded()
+        return self._conf.get('default_backup', 'Not set')
+    
     def cli_default_backup(self, add):
         if not add:
             return
-        conf = self.conf()
-        conf['default_backup'] = str(Path(add).resolve())
-        self.filemanager.save(conf)
+        self._ensure_loaded()
+        self._conf['default_backup'] = str(Path(add).resolve())
+        self._fm.save(self._conf)
         print(f'Successfully swapped default_backup to {add}')
-    
-    
+        
     def change_backup(self, path):
         if not path:
             return
-        conf = self.conf()
-        conf['backup'] = str(Path(path).resolve())
-        self.filemanager.save(conf)
-        print(f'Successfully swapped backup to {path}') 
-
-    def remove_source(self, idx):
-        conf = self.conf()
-        removed = conf["source"].pop(idx)
-        self.filemanager.save(conf)
-        return removed
-    
-    def add_source(self, path: str):
-        conf = self.conf()
-        sources = conf.setdefault('source', [])
-        sources.append(str(Path(path).resolve()))
-        self.filemanager.save(conf)
+        self._ensure_loaded()
+        self._conf['backup'] = str(Path(path).resolve())
+        self._fm.save(self._conf)
+        print(f'Successfully swapped backup to {path}')
         
-    def get_sources(self):
-        return self.conf().get('source', [])
     
-    def get_backup_path(self):
-        return self.conf().get('backup', 'Not set')
-    
-    def get_default_path(self):
-        return self.conf().get('default_backup', 'not set')

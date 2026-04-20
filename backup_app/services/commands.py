@@ -1,8 +1,8 @@
-from .config_manager import Executables
+from .config_manager import ConfigManager
 from .backup_engine import BackupEngine
 from typing import Callable
 
-config = Executables()
+config = ConfigManager()
 backup = BackupEngine()
 
 class Commands:
