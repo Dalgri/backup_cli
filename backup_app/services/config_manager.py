@@ -48,24 +48,6 @@ class FileManager:
             # overwrite file with fixed version
             self.save(data) 
             return data 
-        
-
-class SetupDefaults:
-    def __init__(self):
-        self.filemanager = FileManager()
-        
-    def get_defaults(self):
-        if self.filemanager._conf is None:
-            self.filemanager.load()
-            
-            default = Path.home() / 'Documents' / 'backup'
-            if not default.exists():
-                default.mkdir(parents=True, exist_ok=True)
-            conf = self.filemanager._conf
-            conf.setdefault('source', [])
-            conf.setdefault('default_backup', str(default))
-            conf.setdefault('backup', str(self.conf['default_backup']))
-            self.filemanager.save(conf)
 
 class ConfigManager:
     
