@@ -1,15 +1,17 @@
 import shutil
 from pathlib import Path
 from .config_manager import ConfigManager
+from .config_manager import SetupDefaults
+from .config_manager import Executables
 import hashlib
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from backup_app.utils.logger import Logger
 
 class BackupEngine():
     def __init__(self):
-        self.config = ConfigManager()
-        self.config.get_defaults()
+        self.config = Executables()
         self.logger = Logger()
+        SetupDefaults.get_defaults()
         
     def _files_differ(self, src: Path, dst: Path) -> bool:
         # Returns True if src should overwrite dst, rsync-style

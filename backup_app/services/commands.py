@@ -1,8 +1,9 @@
 from .config_manager import ConfigManager
+from .config_manager import Executables
 from .backup_engine import BackupEngine
 from typing import Callable
 
-config = ConfigManager()
+config = Executables()
 backup = BackupEngine()
 
 class Commands:
@@ -45,7 +46,6 @@ commands: Commands = CommandRegistry(
         'get-sources': config.get_sources,
         'get-backup': config.get_backup_path,
         'get-default': config.get_default_path,
-        'get-defaults': config.get_defaults,
         'add-source': config.add_source,
         'change-default': config.cli_default_backup,
         'change-backup': config.change_backup,
