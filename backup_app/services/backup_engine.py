@@ -1,6 +1,5 @@
 import shutil
 from pathlib import Path
-from .config_manager import ConfigManager
 from .config_manager import SetupDefaults
 from .config_manager import Executables
 import hashlib

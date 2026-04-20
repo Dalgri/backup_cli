@@ -1,4 +1,3 @@
-from .config_manager import ConfigManager
 from .config_manager import Executables
 from .backup_engine import BackupEngine
 from typing import Callable
