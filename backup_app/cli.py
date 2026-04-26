@@ -60,8 +60,3 @@ def get_backup():
 def get_default():
     print(commands.get_default())
     
-
-class CLI:
-    def __init__(self):
-        app()
-
