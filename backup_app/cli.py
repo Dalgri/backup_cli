@@ -1,7 +1,13 @@
 import typer
 from .services.commands import commands
 
-app = typer.Typer()
+app = typer.Typer(invoke_without_command=True)
+
+@app.callback()
+def main(ctx: typer.Context):
+    # If no subcommand was invoked
+    if ctx.invoked_subcommand is None:
+        commands.run_backup()
 
 @app.command("run")
 def run(dry_run: bool = typer.Option(False, '--dry-run', help='Simulate backup without copying files')):
